@@ -23,6 +23,12 @@ const schema = new mongoose.Schema(
       required: [true, "Please enter Category"],
       trim: true,
     },
+    color: {
+      type: Array,
+    },
+    size: {
+      type: Array,
+    },
   },
   {
     timestamps: true,

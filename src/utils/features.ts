@@ -41,7 +41,7 @@ export const invalidateCache = ({
   if (order) {
     const orderKeys: string[] = [
       "all-orders",
-      `my-order-${userId}`,
+      `my-orders-${userId}`,
       `order-${orderId}`,
     ];
 

@@ -1,13 +1,27 @@
-// import { stripe } from "../app.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Coupon } from "../models/coupon.js";
 import ErrorHandler from "../utils/utility-class.js";
 
+interface MulterFile extends Express.Multer.File {
+  firebaseUrl?: string;
+}
+
 export const createPaymentIntent = TryCatch(async (req, res, next) => {
   const { amount } = req.body;
 
-  if (!amount)
-    return next(new ErrorHandler("Please provide all required fields", 400));
+  if (req.file) {
+    const file = req.file as MulterFile;
+    const fileUrl = file?.firebaseUrl
+    console.log("File uploaded:", file);
+    console.log("Firebase URL:", file?.firebaseUrl);
+    return res.status(201).json({
+      success: true,
+      paymentMethod: "ONLINE",
+      screenshortUrl: file?.firebaseUrl
+    });
+  }
+
+  if (!amount) return next(new ErrorHandler("Please provide all required fields", 400));
 
   return res.status(201).json({
     success: true,
@@ -25,7 +39,8 @@ export const newCoupan = TryCatch(async (req, res, next) => {
 
   return res.status(201).json({
     success: true,
-    message: `Coupon ${coupon} Created Sucesfully`,
+    message: `Coupon Created Sucesfully`,
+    coupon
   });
 });
 

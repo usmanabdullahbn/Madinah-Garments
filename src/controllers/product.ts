@@ -81,13 +81,14 @@ export const getSigleProduct = TryCatch(async (req, res, next) => {
     product,
   });
 });
+
 interface MulterFile extends Express.Multer.File {
   firebaseUrl?: string;
 }
 
 export const newProduct = TryCatch(
   async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
-    const { name, price, stock, category } = req.body;
+    const { name, price, stock, category, color, size } = req.body;
     const file = req.file as MulterFile;
     const photoUrl = file?.firebaseUrl;
 
@@ -103,6 +104,8 @@ export const newProduct = TryCatch(
       stock,
       category: category.toLowerCase(),
       photo: photoUrl,
+      color,
+      size,
     });
 
     invalidateCache({ product: true, admin: true });
@@ -116,37 +119,22 @@ export const newProduct = TryCatch(
 
 export const updateProduct = TryCatch(async (req, res, next) => {
   const { id } = req.params;
-  const { name, price, stock, category } = req.body;
+  const { name, price, stock, category, color, size } = req.body;
   const file = req.file as MulterFile;
   const photoUrl = file?.firebaseUrl;
-
-  console.log('Updating product:', { id, name, price, stock, category, photoUrl });
 
   const product = await Product.findById(id);
 
   if (!product) return next(new ErrorHandler("Product Not Found", 404));
 
-  if (photoUrl) {
-    console.log('Updating photo URL to:', photoUrl);
-    product.photo = photoUrl;
-  }
+  if (photoUrl) product.photo = photoUrl;
+  if (name) product.name = name;
+  if (price) product.price = price;
+  if (stock) product.stock = stock;
+  if (category) product.category = category;
 
-  if (name) {
-    console.log('Updating name to:', name);
-    product.name = name;
-  }
-  if (price) {
-    console.log('Updating price to:', price);
-    product.price = price;
-  }
-  if (stock) {
-    console.log('Updating stock to:', stock);
-    product.stock = stock;
-  }
-  if (category) {
-    console.log('Updating category to:', category);
-    product.category = category;
-  }
+  if (color) product.color = JSON.parse(color);
+  if (size) product.size = JSON.parse(size);
 
   await product.save();
 
@@ -155,8 +143,6 @@ export const updateProduct = TryCatch(async (req, res, next) => {
     productId: String(product._id),
     admin: true,
   });
-
-  console.log('Product updated successfully:', product);
 
   return res.status(200).json({
     success: true,
@@ -220,10 +206,11 @@ export const getAllProducts = TryCatch(
       .skip(skip);
     const [products, filteredOnlyProducts] = await Promise.all([
       productPromise,
-      Product.find(baseQuerry),
+      Product.find(baseQuerry), // Get all matching products without pagination
     ]);
 
-    const totalPage = Math.ceil(products.length / limit);
+    const totalProducts = filteredOnlyProducts.length;
+    const totalPage = Math.ceil(totalProducts / limit);
 
     return res.status(200).json({
       success: true,
@@ -232,37 +219,3 @@ export const getAllProducts = TryCatch(
     });
   }
 );
-
-// const generateRandomProducts = async (count: number = 10) => {
-//   const products = [];
-
-//   for (let i = 0; i < count; i++) {
-//     const product = {
-//       name: faker.commerce.productName(),
-//       photo: "uploads\\9e54d0d9-d934-46d5-a00e-4da0941aeb42.webp",
-//       price: faker.commerce.price({ min: 1500, max: 80000, dec: 0 }),
-//       stock: faker.commerce.price({ min: 0, max: 100, dec: 0 }),
-//       category: faker.commerce.department(),
-//       createdAt: new Date(faker.date.past()),
-//       updatedAt: new Date(faker.date.recent()),
-//       __v: 0,
-//     };
-
-//     products.push(product);
-//   }
-
-//   await Product.create(products);
-
-//   console.log({ succecss: true });
-// };
-
-// const deleteRandomsProducts = async (count: number = 10) => {
-//   const products = await Product.find({}).skip(2);
-
-//   for (let i = 0; i < products.length; i++) {
-//     const product = products[i];
-//     await product.deleteOne();
-//   }
-
-//   console.log({ succecss: true });
-// };

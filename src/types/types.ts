@@ -14,6 +14,8 @@ export interface NewProductRequestBody {
   category: string;
   price: number;
   stock: number;
+  color:[];
+  size:[];
 }
 
 export type ControllerType = (
@@ -54,6 +56,8 @@ export type OrderItemType = {
   photo: string;
   price: number;
   quantity: number;
+  color:string;
+  size:string;
   productId: string;
 };
 
@@ -68,6 +72,8 @@ export type ShippingInfoType = {
 export interface NewOrderRequestBody {
   shippingInfo: ShippingInfoType;
   user: string;
+  screenshot: string;
+  paymentMethod: string;
   subtotal: number;
   tax: number;
   shippingCharges: number;
@@ -75,22 +81,3 @@ export interface NewOrderRequestBody {
   total: number;
   orderItems: OrderItemType[];
 }
-type PaymentData =  {
-  pp_Version: string;
-  pp_TxnType: string;
-  pp_Language: string;
-  pp_MerchantID: string;
-  pp_Password: string;
-  pp_Amount: string;
-  pp_TxnRefNo: string;
-  pp_TxnCurrency: string;
-  pp_TxnDateTime: string;
-  pp_BillReference: string;
-  pp_Description: string;
-  pp_CustomerCardNumber: string;
-  pp_CustomerCardExpiry: string;
-  pp_CustomerCardCvv: string;
-  pp_ReturnURL: string;
-  pp_SecureHash: string;  // Add this line
-};
-

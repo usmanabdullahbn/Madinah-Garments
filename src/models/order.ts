@@ -29,6 +29,14 @@ const schema = new mongoose.Schema(
       ref: "User",
       require: true,
     },
+    screenshot: {
+      type: String,
+      require: true,
+    },
+    paymentMethod: {
+      type: String,
+      require: true,
+    },
     subtotal: {
       type: Number,
       required: true,
@@ -60,6 +68,8 @@ const schema = new mongoose.Schema(
         photo: String,
         price: Number,
         quantity: Number,
+        color:String,
+        size:String,
         productId: {
             type: mongoose.Types.ObjectId,
             ref: "Product",

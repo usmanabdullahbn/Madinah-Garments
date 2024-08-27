@@ -67,6 +67,8 @@ export const newOrder = TryCatch(
       shippingInfo,
       orderItems,
       user,
+      screenshot,
+      paymentMethod,
       subtotal,
       tax,
       shippingCharges,
@@ -74,7 +76,7 @@ export const newOrder = TryCatch(
       total,
     } = req.body;
 
-    if (!shippingInfo || !orderItems || !user || !subtotal || !tax || !total)
+    if (!shippingInfo || !orderItems || !user || !subtotal || !total)
       return next(new ErrorHandler("Please Enter All feild", 400));
 
     const order = await Order.create({
@@ -86,6 +88,8 @@ export const newOrder = TryCatch(
       shippingCharges,
       discount,
       total,
+      screenshot,
+      paymentMethod
     });
     await reduceStock(orderItems);
     invalidateCache({
