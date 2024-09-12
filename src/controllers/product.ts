@@ -88,7 +88,7 @@ interface MulterFile extends Express.Multer.File {
 
 export const newProduct = TryCatch(
   async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
-    const { name, price, stock, category, color, size } = req.body;
+    const { name, price, stock, category, color, size, description } = req.body;
     const file = req.file as MulterFile;
     const photoUrl = file?.firebaseUrl;
 
@@ -104,6 +104,7 @@ export const newProduct = TryCatch(
       stock,
       category: category.toLowerCase(),
       photo: photoUrl,
+      description,
       color,
       size,
     });
@@ -119,7 +120,7 @@ export const newProduct = TryCatch(
 
 export const updateProduct = TryCatch(async (req, res, next) => {
   const { id } = req.params;
-  const { name, price, stock, category, color, size } = req.body;
+  const { name, price, stock, category, color, size, description } = req.body;
   const file = req.file as MulterFile;
   const photoUrl = file?.firebaseUrl;
 
@@ -132,6 +133,8 @@ export const updateProduct = TryCatch(async (req, res, next) => {
   if (price) product.price = price;
   if (stock) product.stock = stock;
   if (category) product.category = category;
+  if (description) product.description = description;
+
 
   if (color) product.color = JSON.parse(color);
   if (size) product.size = JSON.parse(size);

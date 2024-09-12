@@ -23,6 +23,9 @@ const schema = new mongoose.Schema(
       required: [true, "Please enter Category"],
       trim: true,
     },
+    description: {
+      type: String,
+    },
     color: {
       type: Array,
     },
